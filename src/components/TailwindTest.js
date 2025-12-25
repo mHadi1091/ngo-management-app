@@ -1,0 +1,1 @@
+import React from 'react';\n\nfunction TailwindTest() {\n  return (\n    <div className=\"bg-blue-500 text-white p-4 rounded-lg shadow-lg m-4\">\n      <h2 className=\"text-2xl font-bold mb-2\">Tailwind CSS Test</h2>\n      <p className=\"text-blue-100\">If you can see this styled properly, Tailwind is working!</p>\n    </div>\n  );\n}\n\nexport default TailwindTest;

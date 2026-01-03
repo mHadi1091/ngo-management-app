@@ -1,4 +1,4 @@
-import NGOManagementSystem from './components/NGOManagementSystem';
+import NGOManagementSystem from './components/NGOManagementSystemDynamic';
 import './App.css';
 
 function App() {

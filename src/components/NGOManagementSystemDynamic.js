@@ -162,6 +162,61 @@ function NGOManagementSystem({ user, onLogout }) {
     }
   };
 
+  // Generate dynamic donation chart data from donors
+  const generateDonationChartData = () => {
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+    const chartData = monthNames.map(month => ({ month, amount: 0 }));
+    
+    donors.forEach(donor => {
+      if (donor.lastDonation && donor.amount) {
+        const donationMonth = new Date(donor.lastDonation).getMonth();
+        if (donationMonth < 6) {
+          chartData[donationMonth].amount += donor.amount;
+        }
+      }
+    });
+    
+    return chartData;
+  };
+
+  const DonationChart = ({ title = "Monthly Donations" }) => {
+    const donationData = generateDonationChartData();
+    const maxAmount = Math.max(...donationData.map(d => d.amount), 1);
+    
+    return (
+      <div className="bg-white rounded-lg shadow p-6">
+        <h3 className="text-lg font-semibold mb-4 flex items-center">
+          <BarChart3 size={20} className="mr-2 text-blue-600" />
+          {title}
+        </h3>
+        <div className="space-y-3">
+          {donationData.map(item => (
+            <div key={item.month} className="flex items-center">
+              <div className="w-12 text-sm font-medium text-gray-600">{item.month}</div>
+              <div className="flex-1 mx-3">
+                <div className="bg-gray-200 rounded-full h-6 relative overflow-hidden">
+                  <div 
+                    className="bg-gradient-to-r from-green-500 to-green-600 h-6 rounded-full transition-all duration-500 flex items-center justify-end pr-2"
+                    style={{ width: `${maxAmount > 0 ? (item.amount / maxAmount) * 100 : 0}%` }}
+                  >
+                    {item.amount > 0 && (
+                      <span className="text-white text-xs font-semibold">
+                        ${(item.amount / 1000).toFixed(0)}k
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div className="w-16 text-sm font-semibold text-gray-800 text-right">
+                ${item.amount.toLocaleString()}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
   const renderForm = () => {
     const fields = {
       project: [
@@ -286,58 +341,62 @@ function NGOManagementSystem({ user, onLogout }) {
     </div>
   );
 
-  const Dashboard = () => (
-    <div>
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">Dashboard Overview</h1>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <StatCard icon={Target} title="Active Projects" value={projects.length} subtitle={`${projects.filter(p => p.status === 'Active').length} active`} color="#3B82F6" />
-        <StatCard icon={Users} title="Volunteers" value={volunteers.length} subtitle={`${volunteers.filter(v => v.status === 'Active').length} active`} color="#10B981" />
-        <StatCard icon={DollarSign} title="Total Funding" value={`$${donors.reduce((sum, d) => sum + (d.amount || 0), 0).toLocaleString()}`} subtitle="Total donations" color="#F59E0B" />
-        <StatCard icon={Calendar} title="Events" value={events.length} subtitle={`${events.filter(e => e.status === 'Upcoming').length} upcoming`} color="#8B5CF6" />
-      </div>
+  const Dashboard = () => {
+    return (
+      <div>
+        <h1 className="text-3xl font-bold text-gray-800 mb-6">Dashboard Overview</h1>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <StatCard icon={Target} title="Active Projects" value={projects.length} subtitle={`${projects.filter(p => p.status === 'Active').length} active`} color="#3B82F6" />
+          <StatCard icon={Users} title="Volunteers" value={volunteers.length} subtitle={`${volunteers.filter(v => v.status === 'Active').length} active`} color="#10B981" />
+          <StatCard icon={DollarSign} title="Total Funding" value={`$${donors.reduce((sum, d) => sum + (d.amount || 0), 0).toLocaleString()}`} subtitle="Total donations" color="#F59E0B" />
+          <StatCard icon={Calendar} title="Events" value={events.length} subtitle={`${events.filter(e => e.status === 'Upcoming').length} upcoming`} color="#8B5CF6" />
+        </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold mb-4">Recent Projects</h3>
-          <div className="space-y-4">
-            {projects.slice(0, 3).map(project => (
-              <div key={project.id}>
-                <div className="flex justify-between mb-2">
-                  <span className="text-sm font-medium">{project.name}</span>
-                  <span className="text-sm text-gray-500">{project.progress}%</span>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <div className="bg-white rounded-lg shadow p-6">
+            <h3 className="text-lg font-semibold mb-4">Recent Projects</h3>
+            <div className="space-y-4">
+              {projects.slice(0, 3).map(project => (
+                <div key={project.id}>
+                  <div className="flex justify-between mb-2">
+                    <span className="text-sm font-medium">{project.name}</span>
+                    <span className="text-sm text-gray-500">{project.progress}%</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div 
+                      className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${project.progress}%` }}
+                    />
+                  </div>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div 
-                    className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                    style={{ width: `${project.progress}%` }}
-                  />
+              ))}
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg shadow p-6">
+            <h3 className="text-lg font-semibold mb-4">Upcoming Events</h3>
+            <div className="space-y-3">
+              {events.filter(e => e.status === 'Upcoming').slice(0, 3).map(event => (
+                <div key={event.id} className="flex justify-between items-center p-3 bg-gray-50 rounded">
+                  <div>
+                    <p className="font-medium">{event.name}</p>
+                    <p className="text-sm text-gray-500">{event.date}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-medium">{event.attendees} attendees</p>
+                    <p className="text-sm text-gray-500">${event.budget?.toLocaleString()}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold mb-4">Upcoming Events</h3>
-          <div className="space-y-3">
-            {events.filter(e => e.status === 'Upcoming').slice(0, 3).map(event => (
-              <div key={event.id} className="flex justify-between items-center p-3 bg-gray-50 rounded">
-                <div>
-                  <p className="font-medium">{event.name}</p>
-                  <p className="text-sm text-gray-500">{event.date}</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm font-medium">{event.attendees} attendees</p>
-                  <p className="text-sm text-gray-500">${event.budget?.toLocaleString()}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        <DonationChart />
       </div>
-    </div>
-  );
+    );
+  };
 
   const Projects = () => (
     <div>
@@ -462,6 +521,10 @@ function NGOManagementSystem({ user, onLogout }) {
           <Plus size={20} className="mr-2" />
           Add Donor
         </button>
+      </div>
+
+      <div className="mb-8">
+        <DonationChart title="Donation Analytics" />
       </div>
 
       <div className="bg-white rounded-lg shadow overflow-hidden">

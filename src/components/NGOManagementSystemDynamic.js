@@ -21,123 +21,57 @@ function NGOManagementSystem() {
 
   // Initialize data from localStorage or defaults
   useEffect(() => {
-    try {
-      const savedProjects = localStorage.getItem('ngo_projects');
-      const savedVolunteers = localStorage.getItem('ngo_volunteers');
-      const savedDonors = localStorage.getItem('ngo_donors');
-      const savedEvents = localStorage.getItem('ngo_events');
-      const savedReports = localStorage.getItem('ngo_reports');
+    const savedProjects = localStorage.getItem('ngo_projects');
+    const savedVolunteers = localStorage.getItem('ngo_volunteers');
+    const savedDonors = localStorage.getItem('ngo_donors');
+    const savedEvents = localStorage.getItem('ngo_events');
+    const savedReports = localStorage.getItem('ngo_reports');
 
-      // Only set from localStorage if data exists, otherwise use defaults
-      if (savedProjects && savedProjects !== 'undefined') {
-        setProjects(JSON.parse(savedProjects));
-      } else {
-        const defaultProjects = [
-          { id: 1, name: 'Clean Water Initiative', budget: 50000, spent: 32000, status: 'Active', progress: 64, startDate: '2024-01-15', endDate: '2024-12-31', manager: 'Sarah Johnson' },
-          { id: 2, name: 'Education for All', budget: 75000, spent: 45000, status: 'Active', progress: 60, startDate: '2024-03-01', endDate: '2025-02-28', manager: 'Michael Chen' }
-        ];
-        setProjects(defaultProjects);
-        localStorage.setItem('ngo_projects', JSON.stringify(defaultProjects));
-      }
-      
-      if (savedVolunteers && savedVolunteers !== 'undefined') {
-        setVolunteers(JSON.parse(savedVolunteers));
-      } else {
-        const defaultVolunteers = [
-          { id: 1, name: 'Alice Brown', email: 'alice@email.com', skills: 'Teaching, Admin', hours: 120, projects: 3, status: 'Active' },
-          { id: 2, name: 'Bob Smith', email: 'bob@email.com', skills: 'Healthcare, Training', hours: 95, projects: 2, status: 'Active' }
-        ];
-        setVolunteers(defaultVolunteers);
-        localStorage.setItem('ngo_volunteers', JSON.stringify(defaultVolunteers));
-      }
-      
-      if (savedDonors && savedDonors !== 'undefined') {
-        setDonors(JSON.parse(savedDonors));
-      } else {
-        const defaultDonors = [
-          { id: 1, name: 'Tech Corp Foundation', amount: 50000, frequency: 'Annual', lastDonation: '2024-01-15', type: 'Corporate' },
-          { id: 2, name: 'John & Jane Doe', amount: 15000, frequency: 'Quarterly', lastDonation: '2024-10-01', type: 'Individual' }
-        ];
-        setDonors(defaultDonors);
-        localStorage.setItem('ngo_donors', JSON.stringify(defaultDonors));
-      }
-      
-      if (savedEvents && savedEvents !== 'undefined') {
-        setEvents(JSON.parse(savedEvents));
-      } else {
-        const defaultEvents = [
-          { id: 1, name: 'Annual Fundraising Gala', date: '2024-12-15', attendees: 200, budget: 15000, status: 'Upcoming' },
-          { id: 2, name: 'Volunteer Orientation', date: '2024-11-20', attendees: 45, budget: 2000, status: 'Completed' }
-        ];
-        setEvents(defaultEvents);
-        localStorage.setItem('ngo_events', JSON.stringify(defaultEvents));
-      }
-      
-      if (savedReports && savedReports !== 'undefined') {
-        setReports(JSON.parse(savedReports));
-      } else {
-        const defaultReports = [
-          { id: 1, title: 'Q3 2024 Financial Report', type: 'Financial', date: '2024-09-30', status: 'Published' },
-          { id: 2, title: 'Impact Assessment 2024', type: 'Impact', date: '2024-11-01', status: 'Published' }
-        ];
-        setReports(defaultReports);
-        localStorage.setItem('ngo_reports', JSON.stringify(defaultReports));
-      }
-    } catch (error) {
-      console.error('Error loading data from localStorage:', error);
-      // Fallback to default data if localStorage fails
-      setProjects([
-        { id: 1, name: 'Clean Water Initiative', budget: 50000, spent: 32000, status: 'Active', progress: 64, startDate: '2024-01-15', endDate: '2024-12-31', manager: 'Sarah Johnson' },
-        { id: 2, name: 'Education for All', budget: 75000, spent: 45000, status: 'Active', progress: 60, startDate: '2024-03-01', endDate: '2025-02-28', manager: 'Michael Chen' }
-      ]);
-      setVolunteers([
-        { id: 1, name: 'Alice Brown', email: 'alice@email.com', skills: 'Teaching, Admin', hours: 120, projects: 3, status: 'Active' },
-        { id: 2, name: 'Bob Smith', email: 'bob@email.com', skills: 'Healthcare, Training', hours: 95, projects: 2, status: 'Active' }
-      ]);
-      setDonors([
-        { id: 1, name: 'Tech Corp Foundation', amount: 50000, frequency: 'Annual', lastDonation: '2024-01-15', type: 'Corporate' },
-        { id: 2, name: 'John & Jane Doe', amount: 15000, frequency: 'Quarterly', lastDonation: '2024-10-01', type: 'Individual' }
-      ]);
-      setEvents([
-        { id: 1, name: 'Annual Fundraising Gala', date: '2024-12-15', attendees: 200, budget: 15000, status: 'Upcoming' },
-        { id: 2, name: 'Volunteer Orientation', date: '2024-11-20', attendees: 45, budget: 2000, status: 'Completed' }
-      ]);
-      setReports([
-        { id: 1, title: 'Q3 2024 Financial Report', type: 'Financial', date: '2024-09-30', status: 'Published' },
-        { id: 2, title: 'Impact Assessment 2024', type: 'Impact', date: '2024-11-01', status: 'Published' }
-      ]);
-    }
+    setProjects(savedProjects ? JSON.parse(savedProjects) : [
+      { id: 1, name: 'Clean Water Initiative', budget: 50000, spent: 32000, status: 'Active', progress: 64, startDate: '2024-01-15', endDate: '2024-12-31', manager: 'Sarah Johnson' },
+      { id: 2, name: 'Education for All', budget: 75000, spent: 45000, status: 'Active', progress: 60, startDate: '2024-03-01', endDate: '2025-02-28', manager: 'Michael Chen' }
+    ]);
+    
+    setVolunteers(savedVolunteers ? JSON.parse(savedVolunteers) : [
+      { id: 1, name: 'Alice Brown', email: 'alice@email.com', skills: 'Teaching, Admin', hours: 120, projects: 3, status: 'Active' },
+      { id: 2, name: 'Bob Smith', email: 'bob@email.com', skills: 'Healthcare, Training', hours: 95, projects: 2, status: 'Active' }
+    ]);
+    
+    setDonors(savedDonors ? JSON.parse(savedDonors) : [
+      { id: 1, name: 'Tech Corp Foundation', amount: 50000, frequency: 'Annual', lastDonation: '2024-01-15', type: 'Corporate' },
+      { id: 2, name: 'John & Jane Doe', amount: 15000, frequency: 'Quarterly', lastDonation: '2024-10-01', type: 'Individual' }
+    ]);
+    
+    setEvents(savedEvents ? JSON.parse(savedEvents) : [
+      { id: 1, name: 'Annual Fundraising Gala', date: '2024-12-15', attendees: 200, budget: 15000, status: 'Upcoming' },
+      { id: 2, name: 'Volunteer Orientation', date: '2024-11-20', attendees: 45, budget: 2000, status: 'Completed' }
+    ]);
+    
+    setReports(savedReports ? JSON.parse(savedReports) : [
+      { id: 1, title: 'Q3 2024 Financial Report', type: 'Financial', date: '2024-09-30', status: 'Published' },
+      { id: 2, title: 'Impact Assessment 2024', type: 'Impact', date: '2024-11-01', status: 'Published' }
+    ]);
   }, []);
 
-  // Save to localStorage whenever data changes (only if data exists)
+  // Save to localStorage whenever data changes
   useEffect(() => {
-    if (projects.length > 0) {
-      localStorage.setItem('ngo_projects', JSON.stringify(projects));
-    }
+    localStorage.setItem('ngo_projects', JSON.stringify(projects));
   }, [projects]);
   
   useEffect(() => {
-    if (volunteers.length > 0) {
-      localStorage.setItem('ngo_volunteers', JSON.stringify(volunteers));
-    }
+    localStorage.setItem('ngo_volunteers', JSON.stringify(volunteers));
   }, [volunteers]);
   
   useEffect(() => {
-    if (donors.length > 0) {
-      localStorage.setItem('ngo_donors', JSON.stringify(donors));
-    }
+    localStorage.setItem('ngo_donors', JSON.stringify(donors));
   }, [donors]);
   
   useEffect(() => {
-    if (events.length > 0) {
-      localStorage.setItem('ngo_events', JSON.stringify(events));
-    }
+    localStorage.setItem('ngo_events', JSON.stringify(events));
   }, [events]);
   
   useEffect(() => {
-    if (reports.length > 0) {
-      localStorage.setItem('ngo_reports', JSON.stringify(reports));
-    }
+    localStorage.setItem('ngo_reports', JSON.stringify(reports));
   }, [reports]);
 
   const openModal = (type, item = null) => {
@@ -322,10 +256,7 @@ function NGOManagementSystem() {
     </div>
   );
 
-  const Dashboard = () => {
-    console.log('Dashboard rendering with:', { projects: projects.length, volunteers: volunteers.length, donors: donors.length, events: events.length });
-    
-    return (
+  const Dashboard = () => (
     <div>
       <h1 className="text-3xl font-bold text-gray-800 mb-6">Dashboard Overview</h1>
       
@@ -340,57 +271,45 @@ function NGOManagementSystem() {
         <div className="bg-white rounded-lg shadow p-6">
           <h3 className="text-lg font-semibold mb-4">Recent Projects</h3>
           <div className="space-y-4">
-            {projects.length === 0 ? (
-              <p className="text-gray-500">No projects available</p>
-            ) : (
-              projects.slice(0, 3).map(project => (
-                <div key={project.id}>
-                  <div className="flex justify-between mb-2">
-                    <span className="text-sm font-medium">{project.name}</span>
-                    <span className="text-sm text-gray-500">{project.progress || 0}%</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div 
-                      className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                      style={{ width: `${project.progress || 0}%` }}
-                    />
-                  </div>
+            {projects.slice(0, 3).map(project => (
+              <div key={project.id}>
+                <div className="flex justify-between mb-2">
+                  <span className="text-sm font-medium">{project.name}</span>
+                  <span className="text-sm text-gray-500">{project.progress}%</span>
                 </div>
-              ))
-            )}
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div 
+                    className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                    style={{ width: `${project.progress}%` }}
+                  />
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
         <div className="bg-white rounded-lg shadow p-6">
           <h3 className="text-lg font-semibold mb-4">Upcoming Events</h3>
           <div className="space-y-3">
-            {events.filter(e => e.status === 'Upcoming').length === 0 ? (
-              <p className="text-gray-500">No upcoming events</p>
-            ) : (
-              events.filter(e => e.status === 'Upcoming').slice(0, 3).map(event => (
-                <div key={event.id} className="flex justify-between items-center p-3 bg-gray-50 rounded">
-                  <div>
-                    <p className="font-medium">{event.name}</p>
-                    <p className="text-sm text-gray-500">{event.date}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm font-medium">{event.attendees} attendees</p>
-                    <p className="text-sm text-gray-500">${event.budget?.toLocaleString()}</p>
-                  </div>
+            {events.filter(e => e.status === 'Upcoming').slice(0, 3).map(event => (
+              <div key={event.id} className="flex justify-between items-center p-3 bg-gray-50 rounded">
+                <div>
+                  <p className="font-medium">{event.name}</p>
+                  <p className="text-sm text-gray-500">{event.date}</p>
                 </div>
-              ))
-            )}
+                <div className="text-right">
+                  <p className="text-sm font-medium">{event.attendees} attendees</p>
+                  <p className="text-sm text-gray-500">${event.budget?.toLocaleString()}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
     </div>
   );
-  };
 
-  const Projects = () => {
-    console.log('Projects rendering with:', projects);
-    
-    return (
+  const Projects = () => (
     <div>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-gray-800">Project Management</h1>
@@ -400,67 +319,60 @@ function NGOManagementSystem() {
         </button>
       </div>
 
-      {projects.length === 0 ? (
-        <div className="bg-white rounded-lg shadow p-6 text-center">
-          <p className="text-gray-500">No projects available. Click "New Project" to add one.</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {projects.map(project => (
-            <div key={project.id} className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition">
-              <div className="flex justify-between items-start mb-4">
-                <div>
-                  <h3 className="text-xl font-semibold text-gray-800">{project.name}</h3>
-                  <p className="text-sm text-gray-500">Manager: {project.manager}</p>
-                </div>
-                <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                  project.status === 'Active' ? 'bg-green-100 text-green-800' : 
-                  project.status === 'Completed' ? 'bg-blue-100 text-blue-800' : 
-                  'bg-yellow-100 text-yellow-800'
-                }`}>
-                  {project.status}
-                </span>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {projects.map(project => (
+          <div key={project.id} className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition">
+            <div className="flex justify-between items-start mb-4">
+              <div>
+                <h3 className="text-xl font-semibold text-gray-800">{project.name}</h3>
+                <p className="text-sm text-gray-500">Manager: {project.manager}</p>
               </div>
+              <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                project.status === 'Active' ? 'bg-green-100 text-green-800' : 
+                project.status === 'Completed' ? 'bg-blue-100 text-blue-800' : 
+                'bg-yellow-100 text-yellow-800'
+              }`}>
+                {project.status}
+              </span>
+            </div>
 
-              <div className="space-y-3 mb-4">
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Budget:</span>
-                  <span className="font-medium">${project.budget?.toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Spent:</span>
-                  <span className="font-medium">${project.spent?.toLocaleString()}</span>
-                </div>
+            <div className="space-y-3 mb-4">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">Budget:</span>
+                <span className="font-medium">${project.budget?.toLocaleString()}</span>
               </div>
-
-              <div className="mb-4">
-                <div className="flex justify-between text-sm mb-2">
-                  <span className="text-gray-600">Progress</span>
-                  <span className="font-medium">{project.progress || 0}%</span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div 
-                    className="bg-blue-600 h-2 rounded-full"
-                    style={{ width: `${project.progress || 0}%` }}
-                  />
-                </div>
-              </div>
-
-              <div className="flex gap-2">
-                <button onClick={() => openModal('project', project)} className="flex-1 bg-blue-600 text-white px-3 py-2 rounded text-sm hover:bg-blue-700">
-                  Edit
-                </button>
-                <button onClick={() => handleDelete('project', project.id)} className="border border-red-300 text-red-700 px-3 py-2 rounded text-sm hover:bg-red-50">
-                  Delete
-                </button>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">Spent:</span>
+                <span className="font-medium">${project.spent?.toLocaleString()}</span>
               </div>
             </div>
-          ))}
-        </div>
-      )}
+
+            <div className="mb-4">
+              <div className="flex justify-between text-sm mb-2">
+                <span className="text-gray-600">Progress</span>
+                <span className="font-medium">{project.progress}%</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div 
+                  className="bg-blue-600 h-2 rounded-full"
+                  style={{ width: `${project.progress}%` }}
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-2">
+              <button onClick={() => openModal('project', project)} className="flex-1 bg-blue-600 text-white px-3 py-2 rounded text-sm hover:bg-blue-700">
+                Edit
+              </button>
+              <button onClick={() => handleDelete('project', project.id)} className="border border-red-300 text-red-700 px-3 py-2 rounded text-sm hover:bg-red-50">
+                Delete
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
-  };
 
   const Volunteers = () => (
     <div>
@@ -473,47 +385,41 @@ function NGOManagementSystem() {
       </div>
 
       <div className="bg-white rounded-lg shadow overflow-hidden">
-        {volunteers.length === 0 ? (
-          <div className="p-6 text-center">
-            <p className="text-gray-500">No volunteers available. Click "Add Volunteer" to add one.</p>
-          </div>
-        ) : (
-          <table className="w-full">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Skills</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+        <table className="w-full">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Skills</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-200">
+            {volunteers.map(volunteer => (
+              <tr key={volunteer.id} className="hover:bg-gray-50">
+                <td className="px-6 py-4 text-sm font-medium text-gray-900">{volunteer.name}</td>
+                <td className="px-6 py-4 text-sm text-gray-500">{volunteer.email}</td>
+                <td className="px-6 py-4 text-sm text-gray-500">{volunteer.skills}</td>
+                <td className="px-6 py-4 text-sm">
+                  <span className={`px-2 py-1 rounded-full text-xs ${volunteer.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
+                    {volunteer.status}
+                  </span>
+                </td>
+                <td className="px-6 py-4 text-sm">
+                  <div className="flex gap-2">
+                    <button onClick={() => openModal('volunteer', volunteer)} className="text-blue-600 hover:text-blue-800">
+                      <Edit2 size={16} />
+                    </button>
+                    <button onClick={() => handleDelete('volunteer', volunteer.id)} className="text-red-600 hover:text-red-800">
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </td>
               </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {volunteers.map(volunteer => (
-                <tr key={volunteer.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">{volunteer.name}</td>
-                  <td className="px-6 py-4 text-sm text-gray-500">{volunteer.email}</td>
-                  <td className="px-6 py-4 text-sm text-gray-500">{volunteer.skills}</td>
-                  <td className="px-6 py-4 text-sm">
-                    <span className={`px-2 py-1 rounded-full text-xs ${volunteer.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
-                      {volunteer.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-sm">
-                    <div className="flex gap-2">
-                      <button onClick={() => openModal('volunteer', volunteer)} className="text-blue-600 hover:text-blue-800">
-                        <Edit2 size={16} />
-                      </button>
-                      <button onClick={() => handleDelete('volunteer', volunteer.id)} className="text-red-600 hover:text-red-800">
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );

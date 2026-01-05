@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Users, DollarSign, Calendar, FileText, Target, BarChart3, Menu, X, Home, Plus, Edit2, Trash2, Eye } from 'lucide-react';
+import { Users, DollarSign, Calendar, FileText, Target, BarChart3, Menu, X, Home, Plus, Edit2, Trash2, LogOut, User } from 'lucide-react';
 import Modal from './Modal';
 
-function NGOManagementSystem() {
+function NGOManagementSystem({ user, onLogout }) {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(true);
   
@@ -12,6 +12,7 @@ function NGOManagementSystem() {
   const [donors, setDonors] = useState([]);
   const [events, setEvents] = useState([]);
   const [reports, setReports] = useState([]);
+  const [dataLoaded, setDataLoaded] = useState(false);
   
   // Modal states
   const [showModal, setShowModal] = useState(false);
@@ -51,28 +52,30 @@ function NGOManagementSystem() {
       { id: 1, title: 'Q3 2024 Financial Report', type: 'Financial', date: '2024-09-30', status: 'Published' },
       { id: 2, title: 'Impact Assessment 2024', type: 'Impact', date: '2024-11-01', status: 'Published' }
     ]);
+    
+    setDataLoaded(true);
   }, []);
 
-  // Save to localStorage whenever data changes
+  // Save to localStorage whenever data changes (but not on initial load)
   useEffect(() => {
-    localStorage.setItem('ngo_projects', JSON.stringify(projects));
-  }, [projects]);
+    if (dataLoaded) localStorage.setItem('ngo_projects', JSON.stringify(projects));
+  }, [projects, dataLoaded]);
   
   useEffect(() => {
-    localStorage.setItem('ngo_volunteers', JSON.stringify(volunteers));
-  }, [volunteers]);
+    if (dataLoaded) localStorage.setItem('ngo_volunteers', JSON.stringify(volunteers));
+  }, [volunteers, dataLoaded]);
   
   useEffect(() => {
-    localStorage.setItem('ngo_donors', JSON.stringify(donors));
-  }, [donors]);
+    if (dataLoaded) localStorage.setItem('ngo_donors', JSON.stringify(donors));
+  }, [donors, dataLoaded]);
   
   useEffect(() => {
-    localStorage.setItem('ngo_events', JSON.stringify(events));
-  }, [events]);
+    if (dataLoaded) localStorage.setItem('ngo_events', JSON.stringify(events));
+  }, [events, dataLoaded]);
   
   useEffect(() => {
-    localStorage.setItem('ngo_reports', JSON.stringify(reports));
-  }, [reports]);
+    if (dataLoaded) localStorage.setItem('ngo_reports', JSON.stringify(reports));
+  }, [reports, dataLoaded]);
 
   const openModal = (type, item = null) => {
     setModalType(type);
@@ -129,6 +132,8 @@ function NGOManagementSystem() {
           setReports([...reports, itemData]);
         }
         break;
+      default:
+        break;
     }
     closeModal();
   };
@@ -152,92 +157,117 @@ function NGOManagementSystem() {
       case 'report':
         setReports(reports.filter(r => r.id !== id));
         break;
+      default:
+        break;
     }
   };
 
   const renderForm = () => {
     const fields = {
       project: [
-        { name: 'name', label: 'Project Name', type: 'text', required: true },
-        { name: 'manager', label: 'Manager', type: 'text' },
-        { name: 'budget', label: 'Budget', type: 'number' },
-        { name: 'spent', label: 'Spent', type: 'number' },
-        { name: 'progress', label: 'Progress (%)', type: 'number', min: 0, max: 100 },
-        { name: 'status', label: 'Status', type: 'select', options: ['Planning', 'Active', 'Completed'] },
-        { name: 'startDate', label: 'Start Date', type: 'date' },
-        { name: 'endDate', label: 'End Date', type: 'date' }
+        { name: 'name', label: 'Project Name', type: 'text', required: true, icon: Target },
+        { name: 'manager', label: 'Manager', type: 'text', icon: User },
+        { name: 'budget', label: 'Budget ($)', type: 'number', icon: DollarSign },
+        { name: 'spent', label: 'Spent ($)', type: 'number', icon: DollarSign },
+        { name: 'progress', label: 'Progress (%)', type: 'number', min: 0, max: 100, icon: BarChart3 },
+        { name: 'status', label: 'Status', type: 'select', options: ['Planning', 'Active', 'Completed'], icon: Target },
+        { name: 'startDate', label: 'Start Date', type: 'date', icon: Calendar },
+        { name: 'endDate', label: 'End Date', type: 'date', icon: Calendar }
       ],
       volunteer: [
-        { name: 'name', label: 'Name', type: 'text', required: true },
-        { name: 'email', label: 'Email', type: 'email', required: true },
-        { name: 'skills', label: 'Skills', type: 'text' },
-        { name: 'hours', label: 'Hours', type: 'number' },
-        { name: 'projects', label: 'Projects', type: 'number' },
-        { name: 'status', label: 'Status', type: 'select', options: ['Active', 'Inactive'] }
+        { name: 'name', label: 'Full Name', type: 'text', required: true, icon: User },
+        { name: 'email', label: 'Email Address', type: 'email', required: true, icon: Users },
+        { name: 'skills', label: 'Skills & Expertise', type: 'text', icon: Target },
+        { name: 'hours', label: 'Hours Contributed', type: 'number', icon: BarChart3 },
+        { name: 'projects', label: 'Projects Involved', type: 'number', icon: Target },
+        { name: 'status', label: 'Status', type: 'select', options: ['Active', 'Inactive'], icon: Users }
       ],
       donor: [
-        { name: 'name', label: 'Name', type: 'text', required: true },
-        { name: 'type', label: 'Type', type: 'select', options: ['Individual', 'Corporate', 'Foundation', 'Organization'] },
-        { name: 'amount', label: 'Amount', type: 'number' },
-        { name: 'frequency', label: 'Frequency', type: 'select', options: ['One-time', 'Monthly', 'Quarterly', 'Annual'] },
-        { name: 'lastDonation', label: 'Last Donation', type: 'date' }
+        { name: 'name', label: 'Donor Name', type: 'text', required: true, icon: User },
+        { name: 'type', label: 'Donor Type', type: 'select', options: ['Individual', 'Corporate', 'Foundation', 'Organization'], icon: Users },
+        { name: 'amount', label: 'Donation Amount ($)', type: 'number', icon: DollarSign },
+        { name: 'frequency', label: 'Donation Frequency', type: 'select', options: ['One-time', 'Monthly', 'Quarterly', 'Annual'], icon: Calendar },
+        { name: 'lastDonation', label: 'Last Donation Date', type: 'date', icon: Calendar }
       ],
       event: [
-        { name: 'name', label: 'Event Name', type: 'text', required: true },
-        { name: 'date', label: 'Date', type: 'date' },
-        { name: 'attendees', label: 'Attendees', type: 'number' },
-        { name: 'budget', label: 'Budget', type: 'number' },
-        { name: 'status', label: 'Status', type: 'select', options: ['Planning', 'Upcoming', 'Ongoing', 'Completed'] }
+        { name: 'name', label: 'Event Name', type: 'text', required: true, icon: Calendar },
+        { name: 'date', label: 'Event Date', type: 'date', icon: Calendar },
+        { name: 'attendees', label: 'Expected Attendees', type: 'number', icon: Users },
+        { name: 'budget', label: 'Event Budget ($)', type: 'number', icon: DollarSign },
+        { name: 'status', label: 'Event Status', type: 'select', options: ['Planning', 'Upcoming', 'Ongoing', 'Completed'], icon: Target }
       ],
       report: [
-        { name: 'title', label: 'Title', type: 'text', required: true },
-        { name: 'type', label: 'Type', type: 'select', options: ['Financial', 'Impact', 'HR', 'Progress'] },
-        { name: 'date', label: 'Date', type: 'date' },
-        { name: 'status', label: 'Status', type: 'select', options: ['Draft', 'Published'] }
+        { name: 'title', label: 'Report Title', type: 'text', required: true, icon: FileText },
+        { name: 'type', label: 'Report Type', type: 'select', options: ['Financial', 'Impact', 'HR', 'Progress'], icon: FileText },
+        { name: 'date', label: 'Report Date', type: 'date', icon: Calendar },
+        { name: 'status', label: 'Publication Status', type: 'select', options: ['Draft', 'Published'], icon: Target }
       ]
     };
 
     return (
-      <form onSubmit={handleSubmit}>
-        {fields[modalType]?.map(field => (
-          <div key={field.name} className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              {field.label} {field.required && <span className="text-red-500">*</span>}
-            </label>
-            {field.type === 'select' ? (
-              <select
-                value={formData[field.name] || ''}
-                onChange={(e) => setFormData({...formData, [field.name]: e.target.value})}
-                className="w-full p-2 border border-gray-300 rounded-md"
-                required={field.required}
-              >
-                <option value="">Select {field.label}</option>
-                {field.options.map(option => (
-                  <option key={option} value={option}>{option}</option>
-                ))}
-              </select>
-            ) : (
-              <input
-                type={field.type}
-                value={formData[field.name] || ''}
-                onChange={(e) => setFormData({...formData, [field.name]: field.type === 'number' ? Number(e.target.value) : e.target.value})}
-                className="w-full p-2 border border-gray-300 rounded-md"
-                required={field.required}
-                min={field.min}
-                max={field.max}
-              />
-            )}
+      <div className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {fields[modalType]?.map(field => {
+              const Icon = field.icon;
+              return (
+                <div key={field.name} className={`space-y-3 ${
+                  field.name === 'name' || field.name === 'title' ? 'md:col-span-2' : ''
+                }`}>
+                  <label className="block text-sm font-semibold text-gray-700 flex items-center gap-2">
+                    <Icon size={16} className="text-blue-600" />
+                    {field.label} 
+                    {field.required && <span className="text-red-500">*</span>}
+                  </label>
+                  
+                  {field.type === 'select' ? (
+                    <select
+                      value={formData[field.name] || ''}
+                      onChange={(e) => setFormData({...formData, [field.name]: e.target.value})}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white"
+                      required={field.required}
+                    >
+                      <option value="">Choose {field.label}</option>
+                      {field.options.map(option => (
+                        <option key={option} value={option}>{option}</option>
+                      ))}
+                    </select>
+                  ) : (
+                    <input
+                      type={field.type}
+                      value={formData[field.name] || ''}
+                      onChange={(e) => setFormData({...formData, [field.name]: field.type === 'number' ? Number(e.target.value) : e.target.value})}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white"
+                      placeholder={`Enter ${field.label.toLowerCase()}`}
+                      required={field.required}
+                      min={field.min}
+                      max={field.max}
+                    />
+                  )}
+                </div>
+              );
+            })}
           </div>
-        ))}
-        <div className="flex gap-2 mt-6">
-          <button type="submit" className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700">
-            {editingItem ? 'Update' : 'Create'}
-          </button>
-          <button type="button" onClick={closeModal} className="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400">
-            Cancel
-          </button>
-        </div>
-      </form>
+          
+          <div className="flex gap-4 pt-6 border-t border-gray-200">
+            <button 
+              type="submit" 
+              className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-all duration-200 font-semibold flex items-center justify-center gap-2"
+            >
+              <Plus size={20} />
+              {editingItem ? 'Update' : 'Create'} {modalType?.charAt(0).toUpperCase() + modalType?.slice(1)}
+            </button>
+            <button 
+              type="button" 
+              onClick={closeModal} 
+              className="flex-1 py-3 px-6 rounded-lg transition-all duration-200 font-semibold flex items-center justify-center gap-2 bg-gray-200 text-gray-700 hover:bg-gray-300"
+            >
+              <X size={20} />
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
     );
   };
 
@@ -585,31 +615,66 @@ function NGOManagementSystem() {
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
-      <div className={`bg-gray-800 text-white transition-all duration-300 ${sidebarOpen ? 'w-64' : 'w-20'}`}>
-        <div className="p-4 flex items-center justify-between border-b border-gray-700">
-          {sidebarOpen && <h2 className="text-xl font-bold">NGO Manager</h2>}
-          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 hover:bg-gray-700 rounded">
+      <div className={`bg-slate-800 text-white shadow-lg transition-all duration-300 ${
+        sidebarOpen ? 'w-64' : 'w-20'
+      }`}>
+        <div className="p-4 flex items-center justify-between border-b border-slate-700">
+          {sidebarOpen && (
+            <h2 className="text-xl font-bold text-white">
+              NGO Manager
+            </h2>
+          )}
+          <button 
+            onClick={() => setSidebarOpen(!sidebarOpen)} 
+            className="p-2 rounded-lg transition-all duration-200 hover:bg-slate-700 text-white"
+          >
             {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
         
-        <nav className="mt-6">
+        {sidebarOpen && (
+          <div className="p-4 border-b border-slate-700">
+            <div className="flex items-center space-x-3 p-3 bg-slate-700 rounded-lg">
+              <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
+                <User size={18} className="text-white" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-white">{user?.username}</p>
+                <p className="text-xs text-slate-300">{user?.role}</p>
+              </div>
+            </div>
+          </div>
+        )}
+        
+        <nav className="mt-6 px-2">
           {menuItems.map(item => {
             const Icon = item.icon;
             return (
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id)}
-                className={`w-full flex items-center px-4 py-3 hover:bg-gray-700 transition ${
-                  activeTab === item.id ? 'bg-gray-700 border-l-4 border-blue-500' : ''
+                className={`w-full flex items-center px-4 py-3 mb-2 rounded-lg transition-all duration-200 ${
+                  activeTab === item.id 
+                    ? 'bg-blue-600 text-white shadow-md' 
+                    : 'text-slate-300 hover:bg-slate-700 hover:text-white'
                 }`}
               >
                 <Icon size={20} />
-                {sidebarOpen && <span className="ml-3">{item.label}</span>}
+                {sidebarOpen && <span className="ml-3 font-medium">{item.label}</span>}
               </button>
             );
           })}
         </nav>
+        
+        <div className="absolute bottom-4 left-4 right-4">
+          <button
+            onClick={onLogout}
+            className="flex items-center px-4 py-3 rounded-lg transition-all duration-200 text-red-400 hover:bg-red-900/20 hover:text-red-300"
+          >
+            <LogOut size={20} />
+            {sidebarOpen && <span className="ml-3 font-medium">Logout</span>}
+          </button>
+        </div>
       </div>
 
       {/* Main Content */}
